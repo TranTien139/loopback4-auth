@@ -43,7 +43,34 @@ export class UserController {
       }
     }
   })
-  async signup(@requestBody() userData: User) {
+  async signup(@requestBody({
+    content: {
+      'application/json': {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "description": "Email",
+              "type": "string"
+            },
+            "password": {
+              "description": "Password",
+              "type": "string"
+            },
+            "firstName": {
+              "description": "",
+              "type": "string"
+            },
+            "lastName": {
+              "description": "",
+              "type": "string"
+            }
+          },
+          "required": ["email", "password"]
+        },
+      },
+    },
+  }) userData: User) {
     validateCredentials(_.pick(userData, ['email', 'password']));
     userData.password = await this.hasher.hashPassword(userData.password)
     const savedUser = await this.userRepository.create(userData);
